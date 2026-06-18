@@ -1,18 +1,18 @@
 # パブリックサブネット
 resource "aws_subnet" "public_1a" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block               = "10.0.0.0/24"
-  availability_zone        = "ap-northeast-1a"
-  map_public_ip_on_launch  = true
-  tags = { Name = "public-1a" }
+  cidr_block              = "10.0.0.0/24"
+  availability_zone       = "ap-northeast-1a"
+  map_public_ip_on_launch = true
+  tags                    = { Name = "public-1a" }
 }
 
 resource "aws_subnet" "public_1c" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block               = "10.0.1.0/24"
-  availability_zone        = "ap-northeast-1c"
-  map_public_ip_on_launch  = true
-  tags = { Name = "public-1c" }
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "ap-northeast-1c"
+  map_public_ip_on_launch = true
+  tags                    = { Name = "public-1c" }
 }
 
 # アプリ層サブネット(プライベート)
@@ -20,14 +20,14 @@ resource "aws_subnet" "app_1a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.10.0/24"
   availability_zone = "ap-northeast-1a"
-  tags = { Name = "app-1a" }
+  tags              = { Name = "app-1a" }
 }
 
 resource "aws_subnet" "app_1c" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.11.0/24"
   availability_zone = "ap-northeast-1c"
-  tags = { Name = "app-1c" }
+  tags              = { Name = "app-1c" }
 }
 
 # データ層サブネット(プライベート、最も閉じた層)
@@ -35,14 +35,14 @@ resource "aws_subnet" "data_1a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.20.0/24"
   availability_zone = "ap-northeast-1a"
-  tags = { Name = "data-1a" }
+  tags              = { Name = "data-1a" }
 }
 
 resource "aws_subnet" "data_1c" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.21.0/24"
   availability_zone = "ap-northeast-1c"
-  tags = { Name = "data-1c" }
+  tags              = { Name = "data-1c" }
 }
 
 # NATゲートウェイ(コスト削減のため1aのみ)
