@@ -11,3 +11,7 @@ output "rds_endpoint" {
 output "vpc_id" {
   value = aws_vpc.main.id
 }
+
+output "test_output" {
+  value = "PRサイクルのテストです"
+}
