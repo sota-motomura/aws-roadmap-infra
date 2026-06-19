@@ -33,22 +33,54 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-resource "aws_instance" "app_1a" {
-  ami                    = data.aws_ami.amazon_linux.id
-  instance_type          = "t3.micro"
-  subnet_id              = aws_subnet.app_1a.id
-  vpc_security_group_ids = [aws_security_group.app.id]
-  iam_instance_profile   = aws_iam_instance_profile.ec2.name
 
-  tags = { Name = "app-server-1a" }
+#20260619追加
+resource "aws_launch_template" "app" {
+  name_prefix   = "phase1-app-lt-"
+  image_id      = data.aws_ami.amazon_linux.id
+  instance_type = "t3.micro"
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ec2.name
+  }
+
+  vpc_security_group_ids = [aws_security_group.app.id]
+
+  user_data = base64encode(<<-EOF
+    #!/bin/bash
+    dnf install -y httpd
+    systemctl enable httpd
+    systemctl start httpd
+    echo "<h1>Phase1 App Server - $(hostname)</h1>" > /var/www/html/index.html
+  EOF
+  )
+
+  tag_specifications {
+    resource_type = "instance"
+    tags          = { Name = "app-server-asg" }
+  }
 }
 
-resource "aws_instance" "app_1c" {
-  ami                    = data.aws_ami.amazon_linux.id
-  instance_type          = "t3.micro"
-  subnet_id              = aws_subnet.app_1c.id
-  vpc_security_group_ids = [aws_security_group.app.id]
-  iam_instance_profile   = aws_iam_instance_profile.ec2.name
+resource "aws_autoscaling_group" "app" {
+  name                = "phase1-app-asg"
+  vpc_zone_identifier = [aws_subnet.app_1a.id, aws_subnet.app_1c.id]
+  target_group_arns   = [aws_lb_target_group.app.arn]
 
-  tags = { Name = "app-server-1c" }
+  min_size         = 2
+  max_size         = 4
+  desired_capacity = 2
+
+  health_check_type         = "ELB"
+  health_check_grace_period = 60
+
+  launch_template {
+    id      = aws_launch_template.app.id
+    version = "$Latest"
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "app-server-asg"
+    propagate_at_launch = true
+  }
 }
