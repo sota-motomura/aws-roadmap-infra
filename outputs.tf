@@ -12,6 +12,6 @@ output "vpc_id" {
   value = aws_vpc.main.id
 }
 
-output "test_output" {
-  value = "PRサイクルのテストです"
+output "deploy_output" {
+  value = "冗長化検証用"
 }
