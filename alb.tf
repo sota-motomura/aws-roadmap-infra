@@ -23,18 +23,6 @@ resource "aws_lb_target_group" "app" {
   tags = { Name = "phase1-app-tg" }
 }
 
-resource "aws_lb_target_group_attachment" "app_1a" {
-  target_group_arn = aws_lb_target_group.app.arn
-  target_id        = aws_instance.app_1a.id
-  port             = 80
-}
-
-resource "aws_lb_target_group_attachment" "app_1c" {
-  target_group_arn = aws_lb_target_group.app.arn
-  target_id        = aws_instance.app_1c.id
-  port             = 80
-}
-
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = 80
